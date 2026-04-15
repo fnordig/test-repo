@@ -4,9 +4,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  ssh:
+  version:
     runs-on: macos-26
     steps:
       - name: plist
         run: |
           cat /System/Library/CoreServices/SystemVersion.plist
+      - name: version
+        run: |
+          set -x
+          sysctl kern.osproductversion
+          sysctl kern.osrelease
+          uname -a
