@@ -49,8 +49,8 @@ def main(argv, repo, author, debug=False, dry_run=False):
 
     print(f"{ts()} Updating repositories.txt")
     try:
-        with open("repositories.txt", "a") as f:
-            f.write(f"ts={ts()}\n")
+        new_content = open("repositories.txt").read()
+        new_content += f"ts={ts()}\n"
     except UnmodifiedException as e:
         print(f"{ts()} {e}")
         return
