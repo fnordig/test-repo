@@ -35,28 +35,3 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         uv run --project fog-updater fog-updater
-
-    - name: "Approve workflow run for updater"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        WORKFLOW_RUNS=$(gh api 'repos/badboy/test-repo/actions/runs?branch=fog-update/update-metrics-index-main&status=action_required')
-        echo "$WORKFLOW_RUNS" | jq .
-
-
-        TOTAL_COUNT=$(echo "$WORKFLOW_RUNS" | jq '.total_count')
-        if [[ "$TOTAL_COUNT" -eq 1 ]]; then
-          echo "Workflows awaiting approval: $TOTAL_COUNT"
-          exit 1
-        fi
-
-        RUN=$(echo "$WORKFLOW_RUNS" | jq '.workflow_runs[0]')
-        NAME=$(echo "$RUN" | jq '.name')
-        RUN_ID=$(echo "$RUN" | jq '.id')
-
-        if [[ "$RUN_NAME" != "build-test-deploy" ]]; then
-          echo "Wrong workflow waiting: $RUN_NAME"
-          exit 1
-        fi
-
-        gh api --method POST "repos/badboy/test-repo/actions/runs/${RUN_ID}/approve"
