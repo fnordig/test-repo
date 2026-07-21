@@ -15,6 +15,19 @@ import sys
 DEFAULT_ORGANIZATION = "mozilla"
 DEFAULT_AUTHOR_NAME = "data-updater"
 DEFAULT_AUTHOR_EMAIL = "telemetry-alerts@mozilla.com"
+BODY_TEMPLATE = f"""This (automated) patch updates the list from metrics_index.py.
+
+For reviewers:
+
+* Canonical source for the index: <{INDEX_URL}>
+* Please double-check that the changes here are valid and that the referenced files exist.
+    * If the referenced files do not exist, schema deploys will fail
+* Delete this branch after merging or closing the PR.
+
+---
+
+The source code of this automation bot lives in <https://github.com/mozilla/probe-scraper/tree/main/fog-updater>.
+"""  # noqa
 
 class UnmodifiedException(Exception):
     pass
