@@ -9,7 +9,6 @@ import datetime
 import difflib
 import io
 import os
-import requests
 import sys
 
 DEFAULT_ORGANIZATION = "mozilla"
@@ -38,6 +37,14 @@ def ts():
     return str(datetime.datetime.now())
 
 
+def eval_extract():
+    pass
+
+
+def swap_file_list():
+    pass
+
+
 def _commit_repositories_txt(repo, branch, author, new_content):
     contents = repo.get_contents("repositories.txt", ref=branch)
 
@@ -53,7 +60,7 @@ def _commit_repositories_txt(repo, branch, author, new_content):
     return True
 
 
-def main(argv, repo, author, debug=False, dry_run=False):
+def run(argv, repo, author, debug=False, dry_run=False):
     if len(argv) < 1:
         print(USAGE)
         sys.exit(1)
@@ -110,7 +117,7 @@ def main(argv, repo, author, debug=False, dry_run=False):
     print(f"{ts()} Pull request at {pr.html_url}")
 
 
-if __name__ == "__main__":
+def main():
     debug = os.getenv("DEBUG") is not None
     if debug:
         enable_console_debug_logging()
@@ -139,4 +146,4 @@ if __name__ == "__main__":
         f"{ts()} This is fog-update working on https://github.com/{organization} as {author_email} / {author_name}"  # noqa
     )
 
-    main(sys.argv, repo, author, debug, dry_run)
+    run(sys.argv, repo, author, debug, dry_run)

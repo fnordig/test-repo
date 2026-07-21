@@ -25,9 +25,14 @@ jobs:
       with:
         persist-credentials: false
 
+    - name: Setup Python
+      uses: astral-sh/setup-uv@v9
+
     - name: "Update FOG"
-      uses: ./fog-updater
       id: fog-updater
       if: github.repository == 'badboy/test-repo'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        cd ./fog-updater
+        uv run fog-updater
