@@ -33,6 +33,7 @@ jobs:
     needs: [build_and_test]
     permissions:
       contents: read
+      issues: write  # for commenting
     steps:
     - name: Checkout code
       uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -61,16 +62,18 @@ jobs:
         EVENT: ${{ toJSON(github.event) }}
         ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
       run: |
+        echo "pr=$PR_NUMBER"
+        echo "actor=$ACTOR"
+
         for file in ${ALL_CHANGED_FILES}; do
           if [[ "$file" != "repositories.txt" ]]; then
             echo "$file was modified. Only repositories.txt changes are merged automatically."
             echo "Bailing out."
+            gh pr comment "$PR_NUMBER" \
+              --body "[bot] Auto-merge aborted. '${file}' was modified. Only repositories.txt changes are merged automatically."
             exit 0
           fi
         done
-
-        echo "pr=$PR_NUMBER"
-        echo "actor=$ACTOR"
 
         permission=$(gh api /repos/fnordig/test-repo/collaborators/${ACTOR}/permission | jq -r .permission)
         echo "permission=$permission"
@@ -89,4 +92,6 @@ jobs:
         fi
 
         echo "Tests succeeded. Merging this PR automatically."
+        gh pr comment "$PR_NUMBER" \
+          --body "[bot] Tests succeeded. This PR will be automatically merged now."
         GH_TOKEN="$GH_PAT" gh pr merge --admin --rebase "$PR_NUMBER"
