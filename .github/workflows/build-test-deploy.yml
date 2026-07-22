@@ -90,3 +90,31 @@ jobs:
         gh pr comment "$PR_NUMBER" \
           --body "Tests succeeded. This PR will be automatically merged now."
         GH_TOKEN="$GH_PAT" gh pr merge --admin --rebase "$PR_NUMBER"
+
+  windows:
+    runs-on: windows-11-arm
+    permissions:
+      contents: read
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      with:
+        persist-credentials: false
+        repository: "https://github.com/mozilla/glean"
+        ref: "update-to-use-zig-0.16-and-mat/pxrntszzmuwo"
+
+    - name: Setup Python
+      uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+
+    - name: Set up Rust
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        targets: "aarch64-pc-windows-gnullvm"
+
+    - name: Build
+      shell: bash
+      run: |
+        uv tool install maturin
+        uv tool install ziglang==0.15.2
+
+        maturin build --release --target aarch64-pc-windows-gnullvm --zig
