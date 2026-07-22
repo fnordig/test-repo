@@ -116,5 +116,6 @@ jobs:
       run: |
         uv tool install maturin
         uv tool install ziglang==0.15.2
+        ln -s "$(which python-zig)" "$(dirname "$(which python-zig)")/zig"
 
         maturin build --release --target aarch64-pc-windows-gnullvm --zig
