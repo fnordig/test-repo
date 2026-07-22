@@ -42,8 +42,11 @@ jobs:
         GH_PAT: ${{ secrets.GH_PAT }}
         PR_NUMBER: ${{ github.event.issue.number }}
         ACTOR: ${{ github.actor }}
+        EVENT: ${{ toJSON(github.event) }}
       run: |
         set -x
+
+        echo "event=$EVENT"
 
         for file in ${ALL_CHANGED_FILES}; do
           if [[ "$file" != "repositories.txt" ]]; then
