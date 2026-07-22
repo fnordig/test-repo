@@ -20,7 +20,6 @@ jobs:
 
     - name: Build
       run: |
-        jo url=abc test=123
         exit 0
 
   automerge:
