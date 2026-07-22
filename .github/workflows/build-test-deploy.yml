@@ -38,6 +38,7 @@ jobs:
           github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork != true
         }}
       env:
+        GH_TOKEN: ${{ github.token }}
         GH_PAT: ${{ secrets.GH_PAT }}
         PR_NUMBER: ${{ github.event.issue.number }}
         ACTOR: ${{ github.actor }}
@@ -71,4 +72,4 @@ jobs:
           exit 0
         fi
 
-        GITHUB_TOKEN="$GH_PAT" gh pr merge --admin --rebase "$PR_NUMBER"
+        GH_TOKEN="$GH_PAT" gh pr merge --admin --rebase "$PR_NUMBER"
