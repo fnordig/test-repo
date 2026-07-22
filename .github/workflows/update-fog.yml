@@ -26,7 +26,7 @@ jobs:
 
     - name: "Update FOG"
       id: fog-updater
-      if: github.repository == 'badboy/test-repo'
+      if: github.repository == 'fnordig/test-repo'
       env:
         GITHUB_TOKEN: ${{ secrets.GH_PAT }}
       run: |
