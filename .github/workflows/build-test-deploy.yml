@@ -21,7 +21,7 @@ jobs:
     - name: Build
       run: |
         r=$(( $RANDOM % 10 ))
-        echo "$r
+        echo "$r"
         if [[ "$r" -lt 5 ]]; then
           exit 0
         else
