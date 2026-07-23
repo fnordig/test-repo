@@ -107,6 +107,8 @@ jobs:
       with:
         targets: "aarch64-pc-windows-gnullvm"
 
+    - uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4  # v2.9.1
+
     - name: Build
       shell: bash
       run: |
