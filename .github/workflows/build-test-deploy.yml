@@ -128,4 +128,12 @@ jobs:
         uv venv --seed --no-project venv
         . ./venv/Scripts/activate
         pip install ../../target/wheels/glean_sdk-69.0.0-py3-none-win_arm64.whl
-        python3 glean-sample/__main__.py
+        ls -R venv
+
+        python3 -c '
+          import sys
+          print(sys.path)
+
+          import glean
+          print(glean.__file__)
+        '
