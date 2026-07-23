@@ -134,4 +134,6 @@ jobs:
         which python3
         which python
 
+        cat venv/Lib/site-packages/glean/_uniffi/__init__.py
+
         ./venv/Scripts/python -c 'import sys; print(sys.path); import glean; print(glean.__file__)'
