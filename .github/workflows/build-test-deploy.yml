@@ -121,25 +121,6 @@ jobs:
         maturin build --release --target aarch64-pc-windows-gnullvm --zig
         ls -R target/wheels
 
-    - name: Setup Tailscale for SSH access
-      uses: tailscale/github-action@v4
-      continue-on-error: false
-      with:
-        args: '--ssh'
-        oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
-        oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
-        tags: tag:ci
-
-    # 180 seconds should be enough time for initial connect
-    - name: Wait for SSH
-      shell: bash
-      run: |
-        while true; do
-          sleep 180s
-          # Docker container may not have wtmp, infer activity from ps
-          pgrep -u root -x login || break
-        done
-
     - name: Run sample
       shell: bash
       run: |
