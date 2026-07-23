@@ -124,10 +124,14 @@ jobs:
     - name: Run sample
       shell: bash
       run: |
+        set -x
         cd samples/python
         uv venv --seed --no-project venv
         . ./venv/Scripts/activate
         pip install ../../target/wheels/glean_sdk-69.0.0-py3-none-win_arm64.whl
         ls -R venv
 
-        python3 -c 'import sys; print(sys.path); import glean; print(glean.__file__)'
+        which python3
+        which python
+
+        ./venv/Scripts/python -c 'import sys; print(sys.path); import glean; print(glean.__file__)'
