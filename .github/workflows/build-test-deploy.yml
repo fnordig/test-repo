@@ -121,6 +121,8 @@ jobs:
         maturin build --release --target aarch64-pc-windows-gnullvm --zig
         ls -R target/wheels
 
+        unzip -l target/wheels/glean_sdk-69.0.0-py3-none-win_arm64.whl
+
     - name: Run sample
       shell: bash
       run: |
