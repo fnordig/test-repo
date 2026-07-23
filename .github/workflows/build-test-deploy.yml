@@ -110,7 +110,7 @@ jobs:
     - name: Build
       shell: bash
       run: |
-        uv tool install maturin
+        uv tool install git+https://github.com/PyO3/maturin
         uv tool install ziglang==0.15.2
         ln -s "$(which python-zig)" "$(dirname "$(which python-zig)")/zig"
 
@@ -161,6 +161,6 @@ jobs:
         which python3
         which python
 
-        cat venv/Lib/site-packages/glean/_uniffi/__init__.py
+        cat venv/Lib/site-packages/glean/_uniffi/__init__.py || true
 
         ./venv/Scripts/python -c 'import sys; print(sys.path); import glean; print(glean.__file__)'
