@@ -38,7 +38,6 @@ jobs:
     needs: [build_and_test]
     permissions:
       contents: read
-      issues: write  # for commenting
       pull-requests: write  # for commenting
     if:
       ${{
