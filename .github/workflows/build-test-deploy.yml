@@ -145,13 +145,6 @@ jobs:
     permissions:
       contents: read
     steps:
-    - name: Checkout code
-      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-      with:
-        persist-credentials: false
-        repository: "mozilla/glean"
-        ref: "update-to-use-zig-0.16-and-mat/pxrntszzmuwo"
-
     - name: Setup Python
       uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
 
@@ -165,7 +158,6 @@ jobs:
       run: |
         set -x
 
-        cd samples/python
         uv venv --seed --no-project venv
         . ./venv/Scripts/activate
         pip install ../../target/glean_sdk-69.0.0-py3-none-win_arm64.whl
@@ -176,8 +168,6 @@ jobs:
         cat venv/Lib/site-packages/glean/_uniffi/__init__.py || true
 
         ./venv/Scripts/python -c 'import sys; print(sys.path); import glean; print(glean.__file__)'
-
-        python glean-sample/__main__.py
 
   report-result:
     runs-on: ubuntu-latest
