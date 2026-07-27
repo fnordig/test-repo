@@ -7,6 +7,10 @@ jobs:
   ssh:
     runs-on: ubuntu-latest
     steps:
+      - uses: jirutka/setup-alpine@v1
+        with:
+          branch: latest-stable
+
       - name: Setup Tailscale for SSH access
         uses: tailscale/github-action@v4
         continue-on-error: false
