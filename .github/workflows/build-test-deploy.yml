@@ -64,8 +64,7 @@ jobs:
 
     - name: Auto-merge
       env:
-        GH_TOKEN: ${{ github.token }}
-        GH_PAT: ${{ steps.generate-token.outputs.token }}
+        GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         PR_NUMBER: ${{ github.event.pull_request.number }}
         ACTOR: ${{ github.actor }}
         EVENT: ${{ toJSON(github.event) }}
@@ -97,7 +96,7 @@ jobs:
         echo "Tests succeeded. Merging this PR automatically."
         gh pr comment "$PR_NUMBER" \
           --body "Tests succeeded. This PR will be automatically merged now."
-        GH_TOKEN="$GH_PAT" gh pr merge --admin --rebase "$PR_NUMBER"
+        gh pr merge --admin --rebase "$PR_NUMBER"
 
   report-result:
     runs-on: ubuntu-latest
