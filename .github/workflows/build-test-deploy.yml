@@ -28,6 +28,11 @@ jobs:
       run: |
         exit 0
 
+    - name: Fail on queue
+      if: ${{ github.event_name == 'merge_group' }}
+      run: |
+        exit 1
+
   automerge:
     runs-on: ubuntu-latest
     needs: [build_and_test]
