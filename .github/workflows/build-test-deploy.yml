@@ -4,6 +4,8 @@ on:
     branches:
     - main
   pull_request:
+  merge_group:
+    types: [checks_requested]
 
 permissions: {}
 
@@ -176,3 +178,16 @@ jobs:
         ./venv/Scripts/python -c 'import sys; print(sys.path); import glean; print(glean.__file__)'
 
         python glean-sample/__main__.py
+
+  report-result:
+    runs-on: ubuntu-latest
+    if: ${{ !cancelled() }}
+    needs:
+      - build_and_test
+      - windows
+    steps:
+      - name: Determine result
+        run: |
+          echo "$RESULTS" | grep -v failure
+        env:
+          RESULTS: ${{ join(needs.*.result, ',') }}
