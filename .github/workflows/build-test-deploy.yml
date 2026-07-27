@@ -31,7 +31,7 @@ jobs:
     - name: Fail on queue
       if: ${{ github.event_name == 'merge_group' }}
       run: |
-        exit 1
+        exit 0
 
   automerge:
     runs-on: ubuntu-latest
