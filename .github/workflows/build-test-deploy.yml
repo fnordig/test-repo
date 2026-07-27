@@ -105,67 +105,11 @@ jobs:
           --body "Tests succeeded. This PR will be automatically merged now."
         GH_TOKEN="$GH_PAT" gh pr merge --admin --rebase "$PR_NUMBER"
 
-  windows-build:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-    permissions:
-      contents: read
-    steps:
-    - name: Setup Python
-      uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
-
-    - name: Set up Rust
-      uses: dtolnay/rust-toolchain@stable
-      with:
-        targets: "aarch64-pc-windows-gnullvm"
-
-    - uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4  # v2.9.1
-
-    - name: Build
-      shell: bash
-      run: |
-        set -x
-
-        mkdir -p target/wheels
-        echo 1 > target/wheels/glean_sdk-69.0.0-py3-none-win_arm64.whl
-        ls -R target/wheels
-
-    - uses: actions/upload-artifact@v7
-      with:
-        path: target/wheels/*
-        name: wheels
-
-  windows:
-    runs-on: windows-11-arm
-    needs: windows-build
-    permissions:
-      contents: read
-    steps:
-    - name: Setup Python
-      uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
-
-    - uses: actions/download-artifact@v8
-      with:
-        name: wheels
-        path: target
-
-    - name: Run sample
-      shell: bash
-      run: |
-        set -x
-
-        ls -R target
-        uv venv --seed --no-project venv
-        . ./venv/Scripts/activate
-        which python
-        ./venv/Scripts/python -c 'import sys; print(sys.path)'
-
   report-result:
     runs-on: ubuntu-latest
     if: ${{ !cancelled() }}
     needs:
       - build_and_test
-      - windows
     steps:
       - name: Determine result
         run: |
