@@ -24,10 +24,17 @@ jobs:
     - name: Setup Python
       uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
 
+      - name: Generate a token
+        id: generate-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
     - name: "Update FOG"
       id: fog-updater
       if: github.repository == 'fnordig/test-repo'
       env:
-        GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+        GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       run: |
         uv run --project fog-updater fog-updater

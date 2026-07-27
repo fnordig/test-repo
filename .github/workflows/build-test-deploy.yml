@@ -55,10 +55,17 @@ jobs:
       with:
         base_sha: ${{ github.event.pull_request.base.sha || github.event.before }}
 
+    - name: Generate a token
+      id: generate-token
+      uses: actions/create-github-app-token@v3
+      with:
+        client-id: ${{ vars.APP_CLIENT_ID }}
+        private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
     - name: Auto-merge
       env:
         GH_TOKEN: ${{ github.token }}
-        GH_PAT: ${{ secrets.GH_PAT }}
+        GH_PAT: ${{ steps.generate-token.outputs.token }}
         PR_NUMBER: ${{ github.event.pull_request.number }}
         ACTOR: ${{ github.actor }}
         EVENT: ${{ toJSON(github.event) }}
