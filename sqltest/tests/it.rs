@@ -105,5 +105,8 @@ fn run() -> Result<()> {
         eprintln!("2 remove_dir_all failed: {err:?}")
     });
 
+    eprintln!("list 4");
+    list_dir(tmp.path())?;
+
     Ok(())
 }
