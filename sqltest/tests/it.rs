@@ -43,7 +43,7 @@ fn test() {
 
 fn list_dir(path: &Path) -> Result<()> {
     for entry in WalkDir::new(path) {
-        println!("{}", entry?.path().display());
+        eprintln!("{}", entry?.path().display());
     }
 
     Ok(())
