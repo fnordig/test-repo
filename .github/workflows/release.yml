@@ -2,6 +2,9 @@ name: Release
 
 on:
   push:
+    push:
+      branches:
+      - main
     tags: ['v*']
 
 # Drop all default GITHUB_TOKEN permissions; each job declares its own least-privilege set.
@@ -51,6 +54,7 @@ jobs:
 
   publish-python:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
     needs:
       - package-python-source
       - package-python-linux
@@ -81,6 +85,7 @@ jobs:
     permissions:
       actions: read   # Required by anchore/sbom-action to read workflow run context.
       contents: write # Required to upload the SBOM as a release asset.
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
     uses: mozilla/ssdlc-actions/.github/workflows/ssdlc-sbom.yml@0980dd214a92599ecdb67ad30f7086b508a3f825 # untagged; pinned to a main-branch commit
     with:
       sbom_name: glean-${{ github.ref_name || github.sha }}
