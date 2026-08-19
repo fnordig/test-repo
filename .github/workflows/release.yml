@@ -1,0 +1,84 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+# Drop all default GITHUB_TOKEN permissions; each job declares its own least-privilege set.
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  package-python-source:
+    runs-on: ubuntu-latest
+    steps:
+      - *checkout
+
+      - &python-setup
+        name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: "3.14"
+
+      - name: Build Python source distribution
+        run: |
+          cd test-repo
+          uv build
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: dist-source
+          path: dist/
+
+  package-python-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - *checkout
+      - *python-setup
+      - name: Build Python wheel
+        run: |
+          uv build --wheel
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: dist-linux
+          path: dist/
+
+  publish-python:
+    runs-on: ubuntu-latest
+    needs:
+      - package-python-source
+      - package-python-linux
+    environment: release
+    permissions:
+      id-token: write
+      contents: write  # to modify the release
+    steps:
+      - *checkout
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: dist-*
+          path: dist
+          merge-multiple: true
+
+      - name: List content
+        run: |
+          ls -R dist/
+
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
+  sbom:
+    name: SBOM
+    permissions:
+      actions: read   # Required by anchore/sbom-action to read workflow run context.
+      contents: write # Required to upload the SBOM as a release asset.
+    uses: mozilla/ssdlc-actions/.github/workflows/ssdlc-sbom.yml@0980dd214a92599ecdb67ad30f7086b508a3f825 # untagged; pinned to a main-branch commit
+    with:
+      sbom_name: glean-${{ github.ref_name || github.sha }}
