@@ -39,10 +39,18 @@ jobs:
           echo "$GITHUB"
         env:
           GITHUB: ${{ toJSON(github) }}
-      - run: |
-          echo "$PR"
+      - id: full-ci
         env:
-          PR: ${{ toJSON(github.event.pull_request) }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          if [[ -n "$PR_NUMBER" ]]; then
+            title=$(gh pr view "$PR_NUMBER" --json title -q '.title')
+            echo "PR number: ${PR_NUMBER}"
+            echo "PR title: {title}"
+            if echo "$title" | grep -q '[full ci]'; then
+              echo "full-ci=true" >> $GITHUB_OUTPUT
+            fi
+          fi
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
@@ -60,7 +68,7 @@ jobs:
       - name: Decide which jobs to run
         id: set-flags
         env:
-          RUST_CHANGED: ${{ github.event.inputs.force-full-run || github.ref_name == 'main' || steps.changed-files-rust.outputs.any_changed }}
+          RUST_CHANGED: ${{ steps.full-ci.outputs.full-ci || github.event.inputs.force-full-run || github.ref_name == 'main' || steps.changed-files-rust.outputs.any_changed }}
         run: |
           echo "rust-changed=$RUST_CHANGED" >> $GITHUB_OUTPUT
 
