@@ -48,7 +48,7 @@ jobs:
       - name: Decide which jobs to run
         id: set-flags
         env:
-          RUST_CHANGED: ${{ steps.changed-files-rust.outputs.any_changed || github.ref_name == 'main' }}
+          RUST_CHANGED: ${{ github.ref_name == 'main' || steps.changed-files-rust.outputs.any_changed }}
         run: |
           echo "rust-changed=$RUST_CHANGED" >> $GITHUB_OUTPUT
 
