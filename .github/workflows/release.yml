@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     branches:
-      - main
+      - mainX
     tags: ['v*']
 
 # Drop all default GITHUB_TOKEN permissions; each job declares its own least-privilege set.
