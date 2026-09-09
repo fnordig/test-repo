@@ -36,10 +36,12 @@ jobs:
     outputs:
       rust-changed: ${{ steps.set-flags.outputs.rust-changed }}
     steps:
-      - run: |
-          echo "$GITHUB"
-        env:
-          GITHUB: ${{ toJSON(github) }}
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+          filter: blob:none
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - id: full-ci
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -53,12 +55,6 @@ jobs:
               echo "full-ci=true" >> $GITHUB_OUTPUT
             fi
           fi
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-        with:
-          persist-credentials: false
-          filter: blob:none
-          fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - id: changed-files-rust
         uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96  # v47.0.6
         with:
