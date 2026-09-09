@@ -27,6 +27,7 @@ jobs:
       - name: Start full CI run on comment
         env:
           PR_NUMBER: ${{ github.event.issue.number }}
+          PR_TITLE: ${{ github.event.issue.title }}
           ACTOR: ${{ github.actor }}
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -47,7 +48,22 @@ jobs:
             exit 0
           fi
 
-          gh workflow run test.yml -f force-full-run=true
-          URL=$(gh run list --workflow="test.yml" --json url -e workflow_dispatch -q '.[0].url')
-          echo "Try run started. URL: ${URL}"
-          gh pr comment "$PR_NUMBER" --body "Try run started. URL: ${URL}"
+          pr_branch=$(echo "$pr_info" | jq -r .head.ref)
+          echo "$pr_branch"
+
+          workflow_id=$(gh run list --workflow=test.yml -b "$pr_branch" --json databaseId -q '.[0].databaseId')
+          echo "$workflow_id"
+
+          if echo "$PR_TITLE" | grep -q '\[full ci\]'; then
+            true
+          else
+            new_title="[full ci] $PR_TITLE"
+              gh pr edit 38 --title "$new_title"
+          fi
+
+          gh run rerun "$workflow_id"
+
+          url="https://github.com/fnordig/test-repo/actions/runs/${workflow_id}"
+          msg="Full CI run started. URL: ${url}"
+          echo "$msg"
+          gh pr comment "$PR_NUMBER" --body "$msg"
