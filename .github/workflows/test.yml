@@ -51,7 +51,7 @@ jobs:
             title=$(gh pr view "$PR_NUMBER" --json title -q '.title')
             echo "PR number: ${PR_NUMBER}"
             echo "PR title: ${title}"
-            if echo "$title" | grep -q '[full ci]'; then
+            if echo "$title" | grep -q '\[full ci\]'; then
               echo "full-ci=true" >> $GITHUB_OUTPUT
             fi
           fi
