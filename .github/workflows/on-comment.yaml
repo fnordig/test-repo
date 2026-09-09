@@ -1,0 +1,42 @@
+name: On comment
+
+on:
+  pull_request_review_comment:
+    types: [created]
+  issue_comment:
+    types: [created]
+
+jobs:
+  try-run:
+    if: |
+      github.event.issue.pull_request && startsWith(github.event.comment.body, '/try')
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+      actions: write
+    steps:
+      - name: Start full CI run on comment
+        env:
+          PR_NUMBER: ${{ github.event.issue.number }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          set -x
+
+          permission=$(gh api /repos/fnordig/test-repo/collaborators/${ACTOR}/permission | jq -r .permission)
+          if [[ "$permission" = "admin" ]]; then
+            true
+          else
+            echo "Insufficient permission. Stopping."
+            exit 0
+          fi
+
+          pr_info=$(gh api "/repos/fnordig/test-repo/pulls/${PR_NUMBER}")
+          pr_state=$(echo "$pr_info" | jq -r .state)
+          if [[ "$pr_state" != "open" ]]; then
+            echo "PR is not open. State: ${pr_state}. Stopping."
+            exit 0
+          fi
+
+          gh workflow run test.yml -f force-full-run=true
+          URL=$(gh run list --workflow="test.yml" --json url -e workflow_dispatch -q '.[0].url')
+          echo "Try run started. URL: ${URL}"
