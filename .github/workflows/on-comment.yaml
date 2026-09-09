@@ -19,6 +19,7 @@ jobs:
         env:
           PR_NUMBER: ${{ github.event.issue.number }}
           ACTOR: ${{ github.actor }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -x
 
