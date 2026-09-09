@@ -2,8 +2,10 @@ name: build-test-deploy
 on:
   push:
     branches:
-    - main
+    - mainX
   pull_request:
+    branches:
+      - mainX
   merge_group:
     types: [checks_requested]
 
