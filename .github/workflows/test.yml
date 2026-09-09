@@ -31,6 +31,7 @@ jobs:
     name: Decision task
     runs-on: ubuntu-latest
     permissions:
+      pull-requests: read
       contents: read
     outputs:
       rust-changed: ${{ steps.set-flags.outputs.rust-changed }}
@@ -42,6 +43,7 @@ jobs:
       - id: full-ci
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           if [[ -n "$PR_NUMBER" ]]; then
             title=$(gh pr view "$PR_NUMBER" --json title -q '.title')
