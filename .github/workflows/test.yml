@@ -8,6 +8,16 @@ on:
     types:
       - opened
       - synchronize
+  workflow_dispatch:
+    inputs:
+      force-full-run:
+        description: 'Force a full try run'
+        required: true
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
 
 # Drop all default GITHUB_TOKEN permissions; each job declares its own least-privilege set.
 permissions: {}
@@ -48,7 +58,7 @@ jobs:
       - name: Decide which jobs to run
         id: set-flags
         env:
-          RUST_CHANGED: ${{ github.ref_name == 'main' || steps.changed-files-rust.outputs.any_changed }}
+          RUST_CHANGED: ${{ github.event.inputs.force-full-run || github.ref_name == 'main' || steps.changed-files-rust.outputs.any_changed }}
         run: |
           echo "rust-changed=$RUST_CHANGED" >> $GITHUB_OUTPUT
 
