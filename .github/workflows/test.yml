@@ -36,11 +36,9 @@ jobs:
       rust-changed: ${{ steps.set-flags.outputs.rust-changed }}
     steps:
       - run: |
-          echo "$REF"
-          echo "$REF_NAME"
+          echo "$GITHUB"
         env:
-          REF: ${{ github.ref }}
-          REF_NAME: ${{ github.ref_name }}
+          GITHUB: ${{ toJSON(github) }}
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
