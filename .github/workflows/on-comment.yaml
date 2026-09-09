@@ -15,6 +15,15 @@ jobs:
       pull-requests: read
       actions: write
     steps:
+      - run: |
+          echo "$GITHUB"
+        env:
+          GITHUB: ${{ toJSON(github) }}
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+          filter: blob:none
+          fetch-depth: 0
       - name: Start full CI run on comment
         env:
           PR_NUMBER: ${{ github.event.issue.number }}
