@@ -12,7 +12,7 @@ jobs:
       github.event.issue.pull_request && startsWith(github.event.comment.body, '/try')
     runs-on: ubuntu-latest
     permissions:
-      pull-requests: read
+      pull-requests: write
       actions: write
     steps:
       - run: |
@@ -50,3 +50,4 @@ jobs:
           gh workflow run test.yml -f force-full-run=true
           URL=$(gh run list --workflow="test.yml" --json url -e workflow_dispatch -q '.[0].url')
           echo "Try run started. URL: ${URL}"
+          gh pr comment "$PR_NUMBER" --body "Try run started. URL: ${URL}"
