@@ -50,7 +50,7 @@ jobs:
           if [[ -n "$PR_NUMBER" ]]; then
             title=$(gh pr view "$PR_NUMBER" --json title -q '.title')
             echo "PR number: ${PR_NUMBER}"
-            echo "PR title: {title}"
+            echo "PR title: ${title}"
             if echo "$title" | grep -q '[full ci]'; then
               echo "full-ci=true" >> $GITHUB_OUTPUT
             fi
@@ -63,6 +63,20 @@ jobs:
             **/Cargo.lock
             **/*.rs
           base_sha: ${{ github.event.pull_request.base.sha || github.event.before }}
+      - name: Show state
+        env:
+          FULL_CI: ${{ steps.full-ci.outputs.full-ci }}
+          FORCE_RUN: ${{ github.event.inputs.force-full-run }}
+          REF_NAME: ${{ github.ref_name == 'main' }}
+          RUST_CHANGED: ${{ steps.changed-files-rust.outputs.any_changed }}
+          FULL: ${{ steps.full-ci.outputs.full-ci || github.event.inputs.force-full-run || github.ref_name == 'main' || steps.changed-files-rust.outputs.any_changed }}
+        run: |
+          echo "full-ci=$FULL_CI"
+          echo "force-run=$FORCE_RUN"
+          echo "ref-name=$REF_NAME"
+          echo "rust-changed=$RUST_CHANGED"
+          echo "full=$FULL"
+
       - name: Decide which jobs to run
         id: set-flags
         env:
