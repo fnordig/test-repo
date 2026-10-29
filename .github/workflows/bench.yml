@@ -13,6 +13,8 @@ jobs:
   benchmark:
     name: Performance regression check
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write  # post the diff comment
     steps:
     - name: Checkout code
       uses: actions/checkout@v7
