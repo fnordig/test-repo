@@ -26,7 +26,7 @@ jobs:
 
     - name: Run benchmark
       run: |
-        cargo bench -- --output-format bencher | tee output.txt
+        cargo bench -p fib -- --output-format bencher | tee output.txt
 
     - name: Download previous benchmark data
       uses: actions/cache@v6
