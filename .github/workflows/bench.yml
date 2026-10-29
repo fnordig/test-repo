@@ -26,6 +26,8 @@ jobs:
 
     - name: Run benchmark
       run: |
+        tree target/criterion || true
+        rm -rf target/criterion
         cargo bench -p fib -- --output-format bencher | tee output.txt
 
     - name: Download previous benchmark data
