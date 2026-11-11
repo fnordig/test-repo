@@ -120,7 +120,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/bin"
           echo "$RUNNER_TEMP/bin" >> $GITHUB_PATH
 
-          echo 'docker run -it -v `pwd`:`pwd` -w `pwd` ghcr.io/realm/swiftlint:0.65.1 $*' > $RUNNER_TEMP/bin/swiftlint
+          echo 'exec docker run -it -v `pwd`:`pwd` -w `pwd` ghcr.io/realm/swiftlint:0.65.1 $*' > $RUNNER_TEMP/bin/swiftlint
           chmod +x $RUNNER_TEMP/bin/swiftlint
 
       - name: swiftlint
