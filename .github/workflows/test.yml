@@ -102,3 +102,33 @@ jobs:
           toolchain: stable
 
       - run: rustc -vV
+
+  lint-swift:
+    runs-on: ubuntu-latest
+    needs: [decide-runs]
+    steps:
+      - &checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+          filter: blob:none
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Set up swiftlint
+        run: |
+          docker pull ghcr.io/realm/swiftlint:latest
+
+          mkdir -p "$RUNNER_TEMP/bin"
+          echo "$RUNNER_TEMP/bin" >> $GITHUB_PATH
+
+          echo 'docker run -it -v `pwd`:`pwd` -w `pwd` ghcr.io/realm/swiftlint:latest -- $*' > $RUNNER_TEMP/bin/swiftlint
+          chmod +x $RUNNER_TEMP/bin/swiftlint
+
+      - name: swiftlint
+        run: |
+          exec 1>&2
+          set -x
+
+          echo "$PATH"
+          which swiftlint
+          swiftlint --version
