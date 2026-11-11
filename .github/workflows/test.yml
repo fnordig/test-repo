@@ -114,13 +114,15 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Set up swiftlint
+        env:
+          SWIFTLINT_VERSION: "0.65.1"
         run: |
-          docker pull ghcr.io/realm/swiftlint:0.65.1
+          docker pull ghcr.io/realm/swiftlint:$SWIFTLINT_VERSION
 
           mkdir -p "$RUNNER_TEMP/bin"
           echo "$RUNNER_TEMP/bin" >> $GITHUB_PATH
 
-          echo 'exec docker run -it -v `pwd`:`pwd` -w `pwd` ghcr.io/realm/swiftlint:0.65.1 $*' > $RUNNER_TEMP/bin/swiftlint
+          echo 'exec docker run -v `pwd`:`pwd` -w `pwd` ghcr.io/realm/swiftlint:$SWIFTLINT_VERSION $*' > $RUNNER_TEMP/bin/swiftlint
           chmod +x $RUNNER_TEMP/bin/swiftlint
 
       - name: swiftlint
